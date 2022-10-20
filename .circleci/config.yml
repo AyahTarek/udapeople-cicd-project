@@ -275,8 +275,8 @@ jobs:
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
-            echo "${API_URL}"
+            echo "API_URL=http://$BACKEND_PUBLIC_IP:3030" > frontend/.env
+            cat frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
@@ -285,8 +285,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recusrive
       - destroy-environment
       - revert-migrations
-
-                    
+                  
   deploy-backend:
     docker:
        - image: cimg/base:stable
