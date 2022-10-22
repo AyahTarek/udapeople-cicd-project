@@ -51,16 +51,15 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      Workflow_ID:
-        type: string
+      workflow_id:
+        type: string 
         default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
-            echo $(parameters.Workflow_ID)
-            SUCCESS=$(curl https://kvdb.io/${KVDB_BUCKET}/migration_<<parameters.Workflow_ID>>)
+            SUCCESS=$(curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7})
             echo $SUCCESS
             if (( $SUCCESS == 1 ));
             then
