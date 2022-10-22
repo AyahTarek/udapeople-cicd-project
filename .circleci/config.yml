@@ -60,6 +60,7 @@ commands:
           when: on_fail
           command: |
             echo <<parameters.Workflow_ID>>
+            echo ${KVDB_BUCKET}
             SUCCESS=$(curl --insecure https://kvdb.io/Q7ZisHZuaFdAfPRv8k2xiB/migration_<<parameters.Workflow_ID>>)
             echo $SUCCESS
             if (( $SUCCESS == 1 ));
@@ -242,10 +243,11 @@ jobs:
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
+            echo migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
-            if grep -q "has been executed successfully." ~/project/migrations_dump.txt
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             else
